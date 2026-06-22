@@ -1,6 +1,6 @@
 // Only If need more information than stored in token then use this function.
 
-import db from "../configs/db";
+import db from "../configs/db.js";
 
 export const getAuthUser = async (req) => {
   const [users] = await db.execute("select * from users where email = ?", [

@@ -1,3 +1,5 @@
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 
 import config from "./configs/config.js";
@@ -11,6 +13,14 @@ app.use(
   express.urlencoded({ extended: true, limit: config.limit.maxJsonSize }),
 );
 
+app.use(
+  cors({
+    origin: config.cors.origin,
+    credentials: true,
+  }),
+);
+
+app.use(cookieParser());
 app.use(checkAuth);
 
 app.use("/api/v1", customRoutes);

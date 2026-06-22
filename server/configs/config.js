@@ -18,6 +18,9 @@ const dev = {
     refresh_secretKey: process.env.REFRESH_SECRET_KEY,
     refresh_expiresIn: process.env.REFRESH_JWT_EXPIRES_IN,
   },
+  cors: {
+    origin: process.env.CLIENT_URL,
+  },
   limit: {
     maxJsonSize: "50mb",
   },

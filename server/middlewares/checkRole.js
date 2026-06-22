@@ -21,10 +21,9 @@ const checkRole = (...allowedRoles) => {
     const hasRole = allowedRoles.some((role) => userRoles.includes(role));
 
     if (!hasRole) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      });
+      const err = new Error("Role denied");
+      err.statusCode = 403;
+      throw err;
     }
 
     next();

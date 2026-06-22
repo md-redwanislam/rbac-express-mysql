@@ -8,12 +8,7 @@ const checkAuth = (req, res, next) => {
     req.path === "/api/v1/auth/refresh-token" ||
     req.path === "/api/v1/auth/register" ||
     req.path === "/api/v1/auth/login" ||
-    req.path === "/api/v1/auth/email-verify" ||
-    req.path === "/api/v1/book/get-all" ||
-    req.path === "/api/v1/book/get-featured" ||
-    req.path.startsWith("/api/v1/book/get/") ||
-    req.path.startsWith("/api/v1/auth/otp-verify") ||
-    req.path.startsWith("/api/v1/auth/reset-password")
+    req.path.startsWith("/api/v1/users/")
   ) {
     return next();
   }
@@ -29,11 +24,15 @@ const checkAuth = (req, res, next) => {
 
   jwt.verify(token, config.jwtoken.secretKey, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ error: "Invalid Token" }); // Forbidden
+      const err = new Error("Invalid Token");
+      err.statusCode = 401;
+      throw err;
     }
 
     if (decoded.type !== "access") {
-      return res.status(403).json({ error: "Invalid Token Type" }); // Forbidden
+      const err = new Error("Invalid Token Type");
+      err.statusCode = 403;
+      throw err;
     }
 
     req.claims = decoded;

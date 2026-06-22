@@ -4,10 +4,9 @@ const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please fill all details",
-    });
+    const err = new Error("Please fill all details");
+    err.statusCode = 400;
+    throw err;
   }
 
   const result = await AuthServices.register(name, email, password);
@@ -22,91 +21,67 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide email and password",
-    });
+    const err = new Error("Please provide email and password");
+    err.statusCode = 400;
+    throw err;
   }
-  const result = await AuthServices.login(email, password);
+  const { user, token, refreshToken } = await AuthServices.login(
+    email,
+    password,
+  );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
   res.status(200).send({
     success: true,
-    data: result,
+    data: {
+      user,
+      token,
+    },
   });
 };
 
 const refreshToken = async (req, res) => {
-  const { refreshToken } = req.body || "";
+  const refreshToken = req.cookies.refreshToken || "";
 
   if (!refreshToken) {
-    return res.status(404).json({
-      success: false,
-      message: "Refresh Token not found",
-    });
+    const err = new Error("Refresh Token not found");
+    err.statusCode = 404;
+    throw err;
   }
 
-  const result = await AuthServices.refreshToken(refreshToken);
+  const { token, newRefreshToken } =
+    await AuthServices.refreshToken(refreshToken);
 
-  res.status(200).send({
-    seuccess: true,
-    data: result,
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-};
-
-const emailVerify = async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide email.",
-    });
-  }
-
-  const result = await AuthServices.emailVerify(email);
 
   res.status(200).send({
     success: true,
-    result,
+    token: token,
   });
 };
 
-const otpVerify = async (req, res) => {
-  const email = req.query.email;
-  const { code } = req.body;
+const logout = async (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
 
-  if (!code) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide OTP",
-    });
-  }
-
-  const result = await AuthServices.otpVerify(email, code);
-
-  res.status(200).send({
+  res.status(200).json({
     success: true,
-    result,
+    message: "Logged out successfully",
   });
 };
 
-const resetPassword = async (req, res) => {
-  const email = req.query.email;
-  const { password } = req.body;
-
-  if (!password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide password",
-    });
-  }
-
-  const result = await AuthServices.resetPassword(email, password);
-
-  res.status(200).send({
-    success: true,
-    result,
-  });
-};
-
-export { emailVerify, login, otpVerify, refreshToken, register, resetPassword };
+export { login, logout, refreshToken, register };

@@ -8,4 +8,5 @@ router.route("/register").post(catchAsync(AuthController.register));
 router.route("/login").post(catchAsync(AuthController.login));
 router.route("/refresh-token").post(catchAsync(AuthController.refreshToken));
 
+router.route("/logout").post(catchAsync(AuthController.logout));
 export default router;
