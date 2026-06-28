@@ -26,8 +26,6 @@ api.interceptors.response.use(
           { withCredentials: true },
         );
 
-        console.log(data);
-
         localStorage.setItem("token", data.token);
         originalRequest.headers.Authorization = `Bearer ${data.token}`;
         return api(originalRequest);
