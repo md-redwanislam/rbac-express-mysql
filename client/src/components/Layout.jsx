@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
+import {
+  FiKey,
+  FiLogOut,
+  FiMenu,
+  FiMoon,
+  FiShield,
+  FiSun,
+  FiUsers,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { FiUsers, FiShield, FiKey, FiLogOut, FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import { logout } from "../features/authSlice";
 
 const navItems = [
@@ -43,7 +51,10 @@ export default function Layout() {
         className={`fixed lg:static inset-y-0 left-0 z-30 w-64 flex flex-col
           transition-transform duration-200 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
-        style={{ background: "var(--sidebar-bg)", color: "var(--sidebar-text)" }}
+        style={{
+          background: "var(--sidebar-bg)",
+          color: "var(--sidebar-text)",
+        }}
       >
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-700">
           <FiShield className="text-2xl text-gray-300" />
@@ -58,9 +69,10 @@ export default function Layout() {
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? "bg-[var(--sidebar-active)] text-white"
-                  : "text-gray-400 hover:bg-[var(--sidebar-hover)] hover:text-white"
+                ${
+                  isActive
+                    ? "bg-(--sidebar-active) text-white"
+                    : "text-gray-400 hover:bg-(--sidebar-hover) hover:text-white"
                 }`
               }
             >
@@ -74,9 +86,13 @@ export default function Layout() {
           <button
             onClick={toggleTheme}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium
-              text-gray-400 hover:bg-[var(--sidebar-hover)] hover:text-white transition-colors"
+              text-gray-400 hover:bg-(--sidebar-hover) hover:text-white transition-colors"
           >
-            {theme === "dark" ? <FiSun className="text-lg" /> : <FiMoon className="text-lg" />}
+            {theme === "dark" ? (
+              <FiSun className="text-lg" />
+            ) : (
+              <FiMoon className="text-lg" />
+            )}
             {theme === "dark" ? "Light Mode" : "Dark Mode"}
           </button>
 
@@ -85,7 +101,9 @@ export default function Layout() {
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="truncate">
-              <p className="text-gray-300 font-medium truncate">{user?.name || "User"}</p>
+              <p className="text-gray-300 font-medium truncate">
+                {user?.name || "User"}
+              </p>
               <p className="truncate">{user?.email || ""}</p>
             </div>
           </div>

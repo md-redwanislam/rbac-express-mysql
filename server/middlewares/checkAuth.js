@@ -16,6 +16,10 @@ const checkAuth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
+  console.log("Authorization:", req.headers.authorization);
+  console.log("Token:", token);
+  console.log("Secret exists:", !!config.jwtoken.secretKey);
+
   if (!token) {
     const err = new Error("Token not found");
     err.statusCode = 401;
@@ -24,6 +28,8 @@ const checkAuth = (req, res, next) => {
 
   jwt.verify(token, config.jwtoken.secretKey, (err, decoded) => {
     if (err) {
+      console.log("JWT Name:", err.name);
+      console.log("JWT Message:", err.message);
       const err = new Error("Invalid Token");
       err.statusCode = 401;
       throw err;
