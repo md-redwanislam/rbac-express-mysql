@@ -30,7 +30,7 @@ const checkAuth = (req, res, next) => {
     if (err) {
       console.log("JWT Name:", err.name);
       console.log("JWT Message:", err.message);
-      const err = new Error("Invalid Token");
+      const err = new Error("Invalid Token from verify");
       err.statusCode = 401;
       throw err;
     }

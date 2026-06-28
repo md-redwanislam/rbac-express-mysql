@@ -10,7 +10,6 @@ const assignRoleToUser = async (req, res) => {
   }
 
   const result = await RoleService.assignRole(userId, roleId);
-  console.log(result);
 
   res.status(201).json({
     success: true,

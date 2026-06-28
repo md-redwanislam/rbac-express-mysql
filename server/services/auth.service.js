@@ -66,7 +66,7 @@ const refreshToken = async (refreshToken) => {
   );
 
   if (!decoded) {
-    const err = new Error("Invalid token");
+    const err = new Error("Invalid token from refresh");
     err.statusCode = 401;
     throw err;
   }
