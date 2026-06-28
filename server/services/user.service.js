@@ -2,23 +2,46 @@ import bcrypt from "bcryptjs";
 import db from "../configs/db.js";
 
 const getAllUsers = async () => {
-  const [users] = await db.execute("select * from users ");
+  const [users] = await db.execute("SELECT id, name, email FROM users");
 
   if (users.length === 0) {
     const err = new Error("No user found");
     err.statusCode = 404;
     throw err;
   }
-  users.map((user) => {
-    user.password = undefined;
-    user.created_at = undefined;
-  });
+
+  for (const user of users) {
+    const [roles] = await db.execute(
+      `SELECT r.id, r.name FROM roles r
+       INNER JOIN user_roles ur ON r.id = ur.role_id
+       WHERE ur.user_id = ?`,
+      [user.id],
+    );
+    user.roles = roles;
+
+    const [permissions] = await db.execute(
+      `SELECT DISTINCT p.id, p.name FROM permissions p
+       WHERE p.id IN (
+         SELECT rp.permission_id FROM role_permissions rp
+         INNER JOIN user_roles ur2 ON rp.role_id = ur2.role_id
+         WHERE ur2.user_id = ?
+         UNION
+         SELECT up.permission_id FROM user_permissions up
+         WHERE up.user_id = ?
+       )`,
+      [user.id, user.id],
+    );
+    user.permissions = permissions;
+  }
 
   return users;
 };
 
 const getUserById = async (id) => {
-  const [users] = await db.execute("SELECT * FROM users WHERE id = ?", [id]);
+  const [users] = await db.execute(
+    "SELECT id, name, email FROM users WHERE id = ?",
+    [id],
+  );
 
   if (users.length === 0) {
     const err = new Error("User not found");
@@ -27,8 +50,29 @@ const getUserById = async (id) => {
   }
 
   const user = users[0];
-  user.password = undefined;
-  user.created_at = undefined;
+
+  const [roles] = await db.execute(
+    `SELECT r.id, r.name FROM roles r
+     INNER JOIN user_roles ur ON r.id = ur.role_id
+     WHERE ur.user_id = ?`,
+    [user.id],
+  );
+  user.roles = roles;
+
+  const [permissions] = await db.execute(
+    `SELECT DISTINCT p.id, p.name FROM permissions p
+     WHERE p.id IN (
+       SELECT rp.permission_id FROM role_permissions rp
+       INNER JOIN user_roles ur2 ON rp.role_id = ur2.role_id
+       WHERE ur2.user_id = ?
+       UNION
+       SELECT up.permission_id FROM user_permissions up
+       WHERE up.user_id = ?
+     )`,
+    [user.id, user.id],
+  );
+  user.permissions = permissions;
+
   return user;
 };
 

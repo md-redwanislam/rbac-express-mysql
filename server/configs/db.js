@@ -12,7 +12,7 @@ const db = mysql.createPool({
   ssl: {
     ca: config.db.cert.replace(/\\n/g, "\n"), // Handle escaped newlines in the certificate
   },
-  connectTimeout: 20000,
+  connectTimeout: 30000,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

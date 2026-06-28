@@ -30,20 +30,21 @@ const login = async (req, res) => {
     password,
   );
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  res.status(200).send({
-    success: true,
-    data: {
-      user,
-      token,
-    },
-  });
+  res
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .send({
+      success: true,
+      data: {
+        user,
+        token,
+      },
+    });
 };
 
 const refreshToken = async (req, res) => {
@@ -58,17 +59,18 @@ const refreshToken = async (req, res) => {
   const { token, newRefreshToken } =
     await AuthServices.refreshToken(refreshToken);
 
-  res.cookie("refreshToken", newRefreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  res.status(200).send({
-    success: true,
-    token: token,
-  });
+  res
+    .cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .send({
+      success: true,
+      token: token,
+    });
 };
 
 const logout = async (req, res) => {

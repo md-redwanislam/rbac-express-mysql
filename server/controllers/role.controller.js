@@ -81,6 +81,15 @@ const updateRole = async (req, res) => {
   });
 };
 
+const getUserRoles = async (req, res) => {
+  const result = await RoleService.getUserRoles();
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+};
+
 const deleteRole = async (req, res) => {
   const { id } = req.params;
 
@@ -103,6 +112,7 @@ export {
   createRole,
   deleteRole,
   getAllRoles,
+  getUserRoles,
   unassignRoleFromUser,
   updateRole,
 };

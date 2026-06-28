@@ -104,11 +104,23 @@ const deleteRole = async (id) => {
   return { message: "Role deleted successfully" };
 };
 
+const getUserRoles = async () => {
+  const [rows] = await db.execute(
+    `SELECT u.name AS user_name, r.name AS role_name
+     FROM users u
+     JOIN user_roles ur ON u.id = ur.user_id
+     JOIN roles r ON r.id = ur.role_id
+     ORDER BY r.name, u.name`,
+  );
+  return rows;
+};
+
 export {
   assignRole,
   createRole,
   deleteRole,
   getAllRoles,
+  getUserRoles,
   unassignRole,
   updateRole,
 };

@@ -6,6 +6,10 @@ import catchAsync from "../utils/catchAsync.js";
 const router = express.Router();
 
 router
+  .route("/user-roles")
+  .get(checkPermission("view_role"), catchAsync(RoleController.getUserRoles));
+
+router
   .route("/assign")
   .post(
     checkPermission("assign_role"),
